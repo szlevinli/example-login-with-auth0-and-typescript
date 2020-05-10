@@ -1,44 +1,118 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React With Typescript
 
-## Available Scripts
+这个项目用于理解和学习如何使用 [Typescript] 编写 [React] 项目。
 
-In the project directory, you can run:
+## 创建项目
 
-### `yarn start`
+使用 [Create React App] 创建 [React] 项目，这里创建一个名为
+_example-react-with-typescript_ 的 [React] 项目。
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```bash
+yarn create react-app example-react-with-typescript --template typescript
+```
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## 配置 ESLint
 
-### `yarn test`
+在项目根目录下执行如下命令，创建 ESLint 的配置文件 <u>.eslintrc.js</u>
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```javascript
+module.exports = {
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:@typescript-eslint/eslint-recommended"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "@typescript-eslint"
+    ],
+    "rules": {
+    }
+};
+```
 
-### `yarn build`
+## Functional Component
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```typescript
+import React, { MouseEvent, FC } from 'react';
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+type Props = {
+  onClick(e: MouseEvent<HTMLElement>): void
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const StatelessComponent: FC<Props> = ({ onClick: handleClick, children }) => {
+  return (
+    <button onClick={handleClick}>
+      {children}
+    </button>
+  );
+};
 
-### `yarn eject`
+export default StatelessComponent;
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- 定义该组件所使用的 **Properties** 类型 `Props`。该定义声明了当使用
+  `StatelessComponent` 组件时必须传入 `onClick` 属性
+- 声明 `StatelessComponent` 组件遵循 `FC` 类型，该类型的定义如下
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```typescript
+type FC<P = {}> = FunctionComponent<P>;
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+interface FunctionComponent<P = {}> {
+    (props: PropsWithChildren<P>, context?: any): ReactElement<any, any> | null;
+    propTypes?: WeakValidationMap<P>;
+    contextTypes?: ValidationMap<any>;
+    defaultProps?: Partial<P>;
+    displayName?: string;
+}
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+这里主要关注 `(props: PropsWithChildren<P>, context?: any): ReactElement<any, any> | null;`
+其中 `PropsWithChildren<P>` 的定义如下
 
-## Learn More
+```typescript
+type PropsWithChildren<P> = P & { children?: ReactNode };
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+这说明除了自定义的属性类型外，会自动增加一个属性 `{ children?: ReactNode }`，也就是说，我们上面定义的
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```typescript
+type Props = {
+  onClick(e: MouseEvent<HTMLElement>): void
+}
+```
+
+实际等同于下面的声明
+
+```typescript
+type Props = {
+  onClick(e: MouseEvent<HTMLElement>): void
+  children?: ReactNode
+}
+```
+
+## 参考
+
+- [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet/blob/master/README.md#basic-cheatsheet-table-of-contents)
+- [Ultimate React Component Patterns with Typescript 2.8](https://levelup.gitconnected.com/ultimate-react-component-patterns-with-typescript-2-8-82990c516935)
+
+[React]:https://reactjs.org/
+[Typescript]:https://www.typescriptlang.org/
+[Create React App]:https://create-react-app.dev/
