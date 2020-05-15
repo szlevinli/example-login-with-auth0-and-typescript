@@ -114,10 +114,50 @@ type Props = {
 };
 ```
 
+## Import Type or Interface
+
+```typescript
+// import interface or type from other file
+import {
+  Auth0ClientOptions,
+  PopupLoginOptions,
+  RedirectLoginOptions,
+  IdToken,
+  GetIdTokenClaimsOptions,
+  GetTokenSilentlyOptions,
+  GetTokenWithPopupOptions,
+  LogoutOptions,
+  RedirectLoginResult,
+  Auth0Client,
+} from '@auth0/auth0-spa-js';
+```
+
+## Context
+
+```typescript
+// 典型的 type 定义
+// 该 type 定义了 Context 的结构
+// 当使用 Context.Provider 组件时，其属性 value 必须遵循该定义
+type Auth0ClientContextType = {
+  isAuthenticated: boolean;
+  user: any;
+  loading: boolean;
+  popupOpen: boolean;
+  loginWithPopup(options: PopupLoginOptions): Promise<void>;
+  handleRedirectCallback(): Promise<void>;
+  getIdTokenClaims(options?: GetIdTokenClaimsOptions): Promise<IdToken>;
+  loginWithRedirect(options: RedirectLoginOptions): Promise<void>;
+  getTokenSilently(
+    options?: GetTokenSilentlyOptions
+  ): Promise<string | undefined>;
+  getTokenWithPopup(options?: GetTokenWithPopupOptions): Promise<string>;
+  logout(options?: LogoutOptions): void;
+};
+```
+
 ## 参考
 
 - [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet/blob/master/README.md#basic-cheatsheet-table-of-contents)
-- [Ultimate React Component Patterns with Typescript 2.8](https://levelup.gitconnected.com/ultimate-react-component-patterns-with-typescript-2-8-82990c516935)
 
 [react]: https://reactjs.org/
 [typescript]: https://www.typescriptlang.org/
