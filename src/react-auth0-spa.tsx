@@ -9,6 +9,7 @@ import createAuth0Client, {
   GetTokenWithPopupOptions,
   LogoutOptions,
   RedirectLoginResult,
+  Auth0Client,
 } from '@auth0/auth0-spa-js';
 import { createCtx } from './utils/createCtx';
 
@@ -28,19 +29,40 @@ type Auth0ClientContextType = {
   logout(options?: LogoutOptions): void;
 };
 
-const DEFAULT_REDIRECT_CALLBACK = () =>
-  window.history.replaceState({}, document.title, window.location.pathname);
-
-type Auth0ClientProps = {
+type Auth0ProviderProps = {
   onRedirectCallback?(result: RedirectLoginResult): void;
 } & Auth0ClientOptions;
 
-export const Auth0Context = React.createContext<string | null>(null);
+const DEFAULT_REDIRECT_CALLBACK = () =>
+  window.history.replaceState({}, document.title, window.location.pathname);
 
-export const Auth0Provider: React.FC<Auth0ClientProps> = ({
+/**
+ * `useAuth0` 自定义 hook. 通过 Context 方式将 Auth0Client 实例化后的对象方法发布出去
+ * `Auth0ContextProvider` Context.Provider
+ */
+export const [useAuth0, Auth0ContextProvider] = createCtx<
+  Auth0ClientContextType
+>();
+
+export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
   children,
   onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
+  ...initOptions
 }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState();
+  const [user, setUser] = useState();
+  const [auth0Client, setAuth0] = useState<Auth0Client>();
+  const [loading, setLoading] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
+
+  useEffect(() => {
+    const initAuth0 = async () => {
+      const auth0FromHook = await createAuth0Client(initOptions);
+      setAuth0(auth0FromHook);
+    };
+    initAuth0();
+  }, []);
+
   return <div>1</div>;
 };
 
