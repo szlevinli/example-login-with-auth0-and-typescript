@@ -13,7 +13,13 @@ yarn create react-app example-react-with-typescript --template typescript
 
 ## 配置 ESLint
 
-在项目根目录下执行如下命令，创建 ESLint 的配置文件 <u>.eslintrc.js</u>
+在项目根目录下执行如下命令
+
+```bash
+./node_modules/.bin/eslint --init
+```
+
+创建 ESLint 的配置文件 <u>.eslintrc.js</u>
 
 ```javascript
 module.exports = {
@@ -46,7 +52,7 @@ module.exports = {
 
 ### About no-unused-vars
 
-当在文件中 import type/interface 后，eslint 会报 no-unused-vars 错，根据
+当在文件中 `import type/interface` 后，eslint 会报 no-unused-vars 错，根据
 [Disallow unused variables (no-unused-vars)](https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/no-unused-vars.md)
 描述在 .eslintrc 文件中增加如下内容可以解决
 
@@ -134,6 +140,16 @@ import {
 
 ## Context
 
+在使用 [React] 的 `createContext()` 创建 Context 时，
+如何使用 [Typescript] 定义 Context 的 type 是比较棘手的。
+
+这是因为 Context 的值是在 `Context.Provider` 组件中，通过属性 `value` 来传递的，
+在使用 `createContext()` 时通常没有办法提供一个初始值，此时可以通过如下语法绕开这个问题
+
+```typescript
+const exampleContext = React.createContext<string>(undefind!);
+```
+
 ```typescript
 // 典型的 type 定义
 // 该 type 定义了 Context 的结构
@@ -153,6 +169,9 @@ type Auth0ClientContextType = {
   getTokenWithPopup(options?: GetTokenWithPopupOptions): Promise<string>;
   logout(options?: LogoutOptions): void;
 };
+
+// 创建 Context
+const Auth0Context = React.createContext<Auth0ClientContextType>(undefind!)
 ```
 
 ## 参考
