@@ -25,5 +25,7 @@ module.exports = {
   rules: {
     // 因为使用了 typescript 因此无需再进行 react 自带的 type check 了
     'react/prop-types': 0,
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
   },
 };
