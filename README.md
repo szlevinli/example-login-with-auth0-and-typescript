@@ -17,35 +17,45 @@ yarn create react-app example-react-with-typescript --template typescript
 
 ```javascript
 module.exports = {
-    "env": {
-        "browser": true,
-        "es6": true,
-        "node": true
+  env: {
+    browser: true,
+    es6: true,
+    node: true,
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true,
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:react/recommended",
-        "plugin:@typescript-eslint/eslint-recommended"
-    ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "plugins": [
-        "react",
-        "@typescript-eslint"
-    ],
-    "rules": {
-    }
+    ecmaVersion: 2018,
+    sourceType: 'module',
+  },
+  plugins: ['react', '@typescript-eslint'],
+  rules: {},
 };
+```
+
+### About no-unused-vars
+
+当在文件中 import type/interface 后，eslint 会报 no-unused-vars 错，根据
+[Disallow unused variables (no-unused-vars)](https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/docs/rules/no-unused-vars.md)
+描述在 .eslintrc 文件中增加如下内容可以解决
+
+```javascript
+{
+  // note you must disable the base rule as it can report incorrect errors
+  "no-unused-vars": "off",
+  "@typescript-eslint/no-unused-vars": ["error"]
+}
 ```
 
 ## Functional Component
@@ -54,15 +64,11 @@ module.exports = {
 import React, { MouseEvent, FC } from 'react';
 
 type Props = {
-  onClick(e: MouseEvent<HTMLElement>): void
-}
+  onClick(e: MouseEvent<HTMLElement>): void;
+};
 
 const StatelessComponent: FC<Props> = ({ onClick: handleClick, children }) => {
-  return (
-    <button onClick={handleClick}>
-      {children}
-    </button>
-  );
+  return <button onClick={handleClick}>{children}</button>;
 };
 
 export default StatelessComponent;
@@ -76,11 +82,11 @@ export default StatelessComponent;
 type FC<P = {}> = FunctionComponent<P>;
 
 interface FunctionComponent<P = {}> {
-    (props: PropsWithChildren<P>, context?: any): ReactElement<any, any> | null;
-    propTypes?: WeakValidationMap<P>;
-    contextTypes?: ValidationMap<any>;
-    defaultProps?: Partial<P>;
-    displayName?: string;
+  (props: PropsWithChildren<P>, context?: any): ReactElement<any, any> | null;
+  propTypes?: WeakValidationMap<P>;
+  contextTypes?: ValidationMap<any>;
+  defaultProps?: Partial<P>;
+  displayName?: string;
 }
 ```
 
@@ -95,17 +101,17 @@ type PropsWithChildren<P> = P & { children?: ReactNode };
 
 ```typescript
 type Props = {
-  onClick(e: MouseEvent<HTMLElement>): void
-}
+  onClick(e: MouseEvent<HTMLElement>): void;
+};
 ```
 
 实际等同于下面的声明
 
 ```typescript
 type Props = {
-  onClick(e: MouseEvent<HTMLElement>): void
-  children?: ReactNode
-}
+  onClick(e: MouseEvent<HTMLElement>): void;
+  children?: ReactNode;
+};
 ```
 
 ## 参考
@@ -113,6 +119,6 @@ type Props = {
 - [React+TypeScript Cheatsheets](https://github.com/typescript-cheatsheets/react-typescript-cheatsheet/blob/master/README.md#basic-cheatsheet-table-of-contents)
 - [Ultimate React Component Patterns with Typescript 2.8](https://levelup.gitconnected.com/ultimate-react-component-patterns-with-typescript-2-8-82990c516935)
 
-[React]:https://reactjs.org/
-[Typescript]:https://www.typescriptlang.org/
-[Create React App]:https://create-react-app.dev/
+[react]: https://reactjs.org/
+[typescript]: https://www.typescriptlang.org/
+[create react app]: https://create-react-app.dev/
