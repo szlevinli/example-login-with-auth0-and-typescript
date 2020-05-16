@@ -11,7 +11,6 @@ import createAuth0Client, {
   RedirectLoginResult,
   Auth0Client,
 } from '@auth0/auth0-spa-js';
-import { createCtx } from './utils/createCtx';
 
 type Auth0ClientContextType = {
   isAuthenticated: boolean;
@@ -36,20 +35,16 @@ type Auth0ProviderProps = {
 const DEFAULT_REDIRECT_CALLBACK = () =>
   window.history.replaceState({}, document.title, window.location.pathname);
 
-/**
- * `useAuth0` 自定义 hook. 通过 Context 方式将 Auth0Client 实例化后的对象方法发布出去
- * `Auth0ContextProvider` Context.Provider
- */
-export const [useAuth0, Auth0ContextProvider] = createCtx<
-  Auth0ClientContextType
->();
+export const Auth0Context = React.createContext<Auth0ClientContextType>(
+  undefined!
+);
 
 export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
   children,
   onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
   ...initOptions
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>();
   const [user, setUser] = useState();
   const [auth0Client, setAuth0] = useState<Auth0Client>();
   const [loading, setLoading] = useState(false);
@@ -59,9 +54,38 @@ export const Auth0Provider: React.FC<Auth0ProviderProps> = ({
     const initAuth0 = async () => {
       const auth0FromHook = await createAuth0Client(initOptions);
       setAuth0(auth0FromHook);
+
+      if (
+        window.location.search.includes('code=') &&
+        window.location.search.includes('state=')
+      ) {
+        const { appState } = await auth0FromHook.handleRedirectCallback();
+        onRedirectCallback(appState);
+      }
+
+      const isAuthenticated = await auth0FromHook.isAuthenticated();
+      setIsAuthenticated(isAuthenticated);
+
+      if (isAuthenticated) {
+        const user = await auth0FromHook.getUser();
+        setUser(user);
+      }
+
+      setLoading(false);
     };
     initAuth0();
   }, []);
+
+  const loginWithPopup = async (params = {}) => {
+    setPopupOpen(true);
+    try {
+      await auth0Client?.loginWithPopup(params);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setPopupOpen(false);
+    }
+  };
 
   return <div>1</div>;
 };

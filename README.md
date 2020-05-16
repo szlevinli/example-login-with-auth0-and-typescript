@@ -143,7 +143,7 @@ import {
 在使用 [React] 的 `createContext()` 创建 Context 时，
 如何使用 [Typescript] 定义 Context 的 type 是比较棘手的。
 
-这是因为 Context 的值是在 `Context.Provider` 组件中，通过属性 `value` 来传递的，
+这是因为 Context 的值是在 `Context.Provider` 组件中通过属性 `value` 来传递的，
 在使用 `createContext()` 时通常没有办法提供一个初始值，此时可以通过如下语法绕开这个问题
 
 ```typescript
@@ -171,7 +171,7 @@ type Auth0ClientContextType = {
 };
 
 // 创建 Context
-const Auth0Context = React.createContext<Auth0ClientContextType>(undefind!)
+const Auth0Context = React.createContext<Auth0ClientContextType>(undefined!);
 ```
 
 ## 参考
